@@ -14,9 +14,6 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/api/v1", routes);
-app.use("/health", (req, res) => {
-  res.json({ success: true, message: "OK" });
-});
 
 
 export default app;

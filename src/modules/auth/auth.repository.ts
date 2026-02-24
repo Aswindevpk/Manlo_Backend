@@ -1,17 +1,52 @@
-import { db } from "../../config/database";
+import prisma from "../../config/prisma";
 
-export const createUser = async (email: string, password: string) => {
-  const result = await db.query(
-    "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email, role",
-    [email, password]
-  );
-  return result.rows[0];
+export const createUser = async (email: string, passwordHash: string) => {
+  return await prisma.user.create({
+    data: {
+      email,
+      passwordHash,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+    },
+  });
 };
 
 export const findUserByEmail = async (email: string) => {
-  const result = await db.query(
-    "SELECT * FROM users WHERE email = $1",
-    [email]
-  );
-  return result.rows[0];
+  return await prisma.user.findUnique({
+    where: { email },
+  });
+};
+
+export const createSession = async (
+  userId: string,
+  refreshToken: string,
+  expiresAt: Date,
+  userAgent?: string,
+  ipAddress?: string
+) => {
+  return await prisma.session.create({
+    data: {
+      userId,
+      refreshToken,
+      expiresAt,
+      userAgent,
+      ipAddress,
+    },
+  });
+};
+
+export const findSessionByToken = async (refreshToken: string) => {
+  return await prisma.session.findUnique({
+    where: { refreshToken },
+    include: { user: true },
+  });
+};
+
+export const deleteSession = async (refreshToken: string) => {
+  return await prisma.session.delete({
+    where: { refreshToken },
+  });
 };
