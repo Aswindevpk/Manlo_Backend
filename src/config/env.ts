@@ -15,4 +15,5 @@ export const env = {
     accessSecret: process.env.ACCESS_TOKEN_SECRET!,
     refreshSecret: process.env.REFRESH_TOKEN_SECRET!,
   },
+  resendApiKey: process.env.RESEND_API_KEY!,
 };

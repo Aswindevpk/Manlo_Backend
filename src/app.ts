@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import routes from "./routes";
+import { globalLimiter } from "./common/middleware/rate-limit.middleware";
 
 const app = express();
 
@@ -12,8 +13,10 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(globalLimiter);
 
 app.use("/api/v1", routes);
+
 
 
 export default app;

@@ -20,6 +20,13 @@ export const findUserByEmail = async (email: string) => {
   });
 };
 
+export const findUserById = async (id: string) => {
+  return await prisma.user.findUnique({
+    where: { id },
+  });
+};
+
+
 export const createSession = async (
   userId: string,
   refreshToken: string,
@@ -50,3 +57,56 @@ export const deleteSession = async (refreshToken: string) => {
     where: { refreshToken },
   });
 };
+
+export const deleteAllUserSessions = async (userId: string) => {
+  return await prisma.session.deleteMany({
+    where: { userId },
+  });
+};
+
+
+export const createVerificationToken = async (
+  userId: string,
+  token: string,
+  type: "EMAIL_VERIFICATION" | "PASSWORD_RESET",
+  expiresAt: Date
+) => {
+  return await prisma.verificationToken.create({
+    data: {
+      userId,
+      token,
+      type,
+      expiresAt,
+    },
+  });
+};
+
+export const findVerificationToken = async (token: string) => {
+  return await prisma.verificationToken.findUnique({
+    where: { token },
+    include: { user: true },
+  });
+};
+
+export const deleteVerificationToken = async (id: string) => {
+  return await prisma.verificationToken.delete({
+    where: { id },
+  });
+};
+
+export const markEmailVerified = async (userId: string) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { isEmailVerified: true },
+  });
+};
+
+export const updatePassword = async (userId: string, passwordHash: string) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash },
+  });
+};
+
+
+
